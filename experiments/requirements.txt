@@ -1,0 +1,11 @@
+# Python dependency manifest.
+# Java analogy: this is the equivalent of Maven's <dependencies> in pom.xml
+# or Gradle's `dependencies { ... }` block.
+#
+# Install everything with:
+#   pip install -r requirements.txt
+#
+# The ">=" pins a minimum version (reproducibility); pip resolves the rest.
+
+groq>=0.9.0
+python-dotenv>=1.0.0
