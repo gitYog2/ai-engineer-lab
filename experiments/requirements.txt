@@ -9,3 +9,7 @@
 
 groq>=0.9.0
 python-dotenv>=1.0.0
+
+# Added in M2 — one SDK per provider, all hidden behind llm.py's single interface.
+openai>=1.0.0
+anthropic>=0.40.0

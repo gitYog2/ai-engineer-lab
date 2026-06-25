@@ -58,13 +58,37 @@ def require_env(name: str) -> str:
 
 
 # --- Convenience accessors (one per provider we'll use across the roadmap) ----
+# Each provider stores its key under a differently-named env var. We map a short,
+# friendly provider name -> the env var that holds its key, so the rest of the
+# codebase never has to remember the exact variable spelling.
+#
+# Java analogy: a small Map<String, String> of provider -> property key.
+_PROVIDER_ENV = {
+    "groq": "GROQ_API_KEY",
+    "openai": "OPENAI_API_KEY",
+    "anthropic": "ANTHROPIC_API_KEY",
+}
+
+
 def groq_api_key() -> str:
     return require_env("GROQ_API_KEY")
 
 
-# Added in M2 — kept here as a preview of where this grows:
-# def openai_api_key() -> str:
-#     return require_env("OPENAI_API_KEY")
-#
-# def anthropic_api_key() -> str:
-#     return require_env("ANTHROPIC_API_KEY")
+def openai_api_key() -> str:
+    return require_env("OPENAI_API_KEY")
+
+
+def anthropic_api_key() -> str:
+    return require_env("ANTHROPIC_API_KEY")
+
+
+def available_providers() -> list[str]:
+    """Return the provider names whose API key is actually present in .env.
+
+    This lets an experiment run with WHATEVER keys you have today and simply
+    skip the rest — no crashes, no commented-out code. Add an OpenAI key later
+    and that provider "lights up" on the next run with zero code changes.
+
+    Java analogy: feature flags driven by which config values are populated.
+    """
+    return [name for name, env in _PROVIDER_ENV.items() if os.getenv(env)]

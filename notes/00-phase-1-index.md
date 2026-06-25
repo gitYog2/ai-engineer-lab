@@ -37,7 +37,7 @@ Legend: ⚪ Not started · 🟡 In progress · 🟢 Done
 | M | Milestone | Concept(s) | Deliverable | Status |
 |---|-----------|-----------|-------------|--------|
 | M1 | Environment + first API call | 01, 03 | One working live call to a provider (Groq) | 🟢 Done (2026-06-18) |
-| M2 | Multi-provider integration | 02, 03 | Clean OpenAI + Anthropic + Groq calls, one pattern | 🟡 Current |
+| M2 | Multi-provider integration | 02, 03 | Clean OpenAI + Anthropic + Groq calls, one pattern | 🟡 Current — abstraction built (`llm.py`), Groq verified live; OpenAI/Anthropic adapters await keys |
 | M3 | Tokenization deep-dive | 04 | Token-counting experiments | ⚪ |
 | M4 | Sampling controls | 04 | Temperature / top_p experiments | ⚪ |
 | M5 | Context windows + cost | 04 | Context-limit experiments + cost math | ⚪ |
@@ -51,7 +51,7 @@ Legend: ⚪ Not started · 🟡 In progress · 🟢 Done
 
 ## 3. Practical Deliverables Checklist
 
-- [ ] API integrations: **Groq ✅ done** · OpenAI + Claude → M2
+- [~] API integrations: **Groq ✅ done & verified** · OpenAI + Claude adapters **built** (`llm.py`), awaiting keys to verify
 - [ ] Model comparison experiments
 - [ ] Token counting experiments
 - [ ] Temperature experiments
@@ -63,7 +63,7 @@ Legend: ⚪ Not started · 🟡 In progress · 🟢 Done
 
 ## 4. Progress
 
-**Phase 1 completion: ~12%** (M1 done — venv + deps installed, first live Groq call verified; 170 tokens, model round-trip ~0.1–0.6 s observed)
+**Phase 1 completion: ~18%** (M1 done; M2 abstraction landed — `llm.py` Strategy/Adapter pattern with one `chat()` interface over Groq + OpenAI + Anthropic; Groq verified live via `m2_multi_provider.py` at 147 tokens / ~1.6 s. OpenAI + Anthropic adapters coded, awaiting keys.)
 
 ---
 
@@ -81,3 +81,4 @@ Legend: ⚪ Not started · 🟡 In progress · 🟢 Done
 |------|-------|---------|
 | 2026-06-17 | Assessment + Concept 01 + Milestone 1 | Workspace created; first task assigned |
 | 2026-06-18 | Ran Milestone 1 (live Groq call) | ✅ First live LLM call. 170 tokens (61 prompt + 109 completion). Model round-trip ~0.1–0.6 s. M1 complete; M2 unlocked. |
+| 2026-06-24 | M2 abstraction (multi-provider) | ✅ Built `llm.py` (Strategy/Adapter: `ChatResult` + `LLMProvider` + Groq/OpenAI/Anthropic + `get_provider` factory) and `m2_multi_provider.py`. `config.py` grew `openai_api_key()`, `anthropic_api_key()`, `available_providers()`. Installed `openai` 2.43.0 + `anthropic` 0.111.0. Ran it: Groq path verified (147 tokens, ~1.6 s). OpenAI/Anthropic adapters coded but key-gated. |
