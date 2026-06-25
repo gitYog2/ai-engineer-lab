@@ -67,6 +67,7 @@ _PROVIDER_ENV = {
     "groq": "GROQ_API_KEY",
     "openai": "OPENAI_API_KEY",
     "anthropic": "ANTHROPIC_API_KEY",
+    "novarelay": "NOVARELAY_API_KEY",  # OpenAI-compatible relay (fronts Claude/GPT/Gemini)
 }
 
 
@@ -80,6 +81,10 @@ def openai_api_key() -> str:
 
 def anthropic_api_key() -> str:
     return require_env("ANTHROPIC_API_KEY")
+
+
+def novarelay_api_key() -> str:
+    return require_env("NOVARELAY_API_KEY")
 
 
 def available_providers() -> list[str]:

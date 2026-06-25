@@ -37,6 +37,7 @@ from config import (
     ConfigError,
     anthropic_api_key,
     groq_api_key,
+    novarelay_api_key,
     openai_api_key,
 )
 
@@ -122,6 +123,35 @@ class OpenAIProvider(_OpenAICompatibleProvider):
         return OpenAI(api_key=openai_api_key())
 
 
+class NovaRelayProvider(_OpenAICompatibleProvider):
+    """Nova AI Relay (novarelay.io) — an OpenAI-COMPATIBLE gateway that fronts
+    many model families (Claude, GPT, Gemini, ...) behind ONE key and ONE base
+    URL. Because it speaks the OpenAI dialect, we reach it with the very same
+    OpenAI SDK — we only point `base_url` at the relay. This is the cleanest
+    proof of the M2 lesson: "OpenAI-compatible" means *same code, just swap
+    base_url + key + model*. Here it lets us call a Claude model THROUGH the
+    OpenAI dialect (no Anthropic SDK needed).
+    """
+    name = "novarelay"
+    default_model = "claude-opus-4-8"      # a Claude model, served via the relay
+    base_url = "https://ai.novarelay.io/v1"
+    # novarelay sits behind Cloudflare, whose bot filter blocks the OpenAI SDK's
+    # default User-Agent ("OpenAI/Python ...") with a 403 "Your request was
+    # blocked." Sending a plain custom User-Agent gets through. (Found by
+    # comparing raw httpx — which reached the app — against the SDK, which 403'd.)
+    user_agent = "ai-engineer-roadmap/1.0"
+
+    def _make_client(self):
+        from openai import OpenAI
+        # Same SDK as OpenAIProvider — the differences are base_url, key, and the
+        # custom User-Agent required to pass novarelay's Cloudflare bot filter.
+        return OpenAI(
+            api_key=novarelay_api_key(),
+            base_url=self.base_url,
+            default_headers={"User-Agent": self.user_agent},
+        )
+
+
 class AnthropicProvider(LLMProvider):
     """Anthropic does NOT use the OpenAI dialect — every line marked DIFFERENT
     is where its API diverges. This is the whole reason the abstraction exists.
@@ -158,6 +188,7 @@ _REGISTRY: dict[str, type[LLMProvider]] = {
     "groq": GroqProvider,
     "openai": OpenAIProvider,
     "anthropic": AnthropicProvider,
+    "novarelay": NovaRelayProvider,
 }
 
 

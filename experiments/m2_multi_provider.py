@@ -30,6 +30,16 @@ import time
 from config import available_providers
 from llm import ChatResult, get_provider
 
+# Windows consoles default to a legacy code page (cp1252) that can't print
+# non-ASCII text — e.g. an upstream provider error in another language — and
+# would crash the whole script with UnicodeEncodeError. Force UTF-8 so any
+# provider's output (or error) prints safely. (No-op on systems already UTF-8.)
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
+
 # Same prompt for everyone, so the comparison is apples-to-apples.
 SYSTEM_PROMPT = "You are a clear, friendly teacher. Answer in exactly 2 sentences."
 USER_PROMPT = "What is a Large Language Model?"
