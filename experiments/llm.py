@@ -38,6 +38,8 @@ from config import (
     anthropic_api_key,
     groq_api_key,
     novarelay_api_key,
+    ollama_base_url,
+    ollama_model,
     openai_api_key,
 )
 
@@ -152,6 +154,26 @@ class NovaRelayProvider(_OpenAICompatibleProvider):
         )
 
 
+class OllamaProvider(_OpenAICompatibleProvider):
+    """A local or remote Ollama server, reached via its OpenAI-compatible /v1
+    API. Same dialect as OpenAI/Groq/novarelay — only base_url + model change.
+    Ollama ignores auth, so the api_key is a throwaway placeholder. WHICH model
+    exists is server-specific (whatever was `ollama pull`-ed), so both the base
+    URL and the model are read from .env (OLLAMA_BASE_URL / OLLAMA_MODEL).
+    """
+    name = "ollama"
+    default_model = "puyangwang/medgemma-27b-it:q8"  # overridable via OLLAMA_MODEL
+
+    def __init__(self, model: str | None = None):
+        self.model = model or ollama_model()
+        self._client = self._make_client()
+
+    def _make_client(self):
+        from openai import OpenAI
+        # Ollama needs no real key; the SDK only requires a non-empty value.
+        return OpenAI(api_key="ollama", base_url=ollama_base_url())
+
+
 class AnthropicProvider(LLMProvider):
     """Anthropic does NOT use the OpenAI dialect — every line marked DIFFERENT
     is where its API diverges. This is the whole reason the abstraction exists.
@@ -189,6 +211,7 @@ _REGISTRY: dict[str, type[LLMProvider]] = {
     "openai": OpenAIProvider,
     "anthropic": AnthropicProvider,
     "novarelay": NovaRelayProvider,
+    "ollama": OllamaProvider,
 }
 
 

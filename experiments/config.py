@@ -68,6 +68,7 @@ _PROVIDER_ENV = {
     "openai": "OPENAI_API_KEY",
     "anthropic": "ANTHROPIC_API_KEY",
     "novarelay": "NOVARELAY_API_KEY",  # OpenAI-compatible relay (fronts Claude/GPT/Gemini)
+    "ollama": "OLLAMA_BASE_URL",       # local/remote Ollama server; its "key" IS the base URL
 }
 
 
@@ -85,6 +86,20 @@ def anthropic_api_key() -> str:
 
 def novarelay_api_key() -> str:
     return require_env("NOVARELAY_API_KEY")
+
+
+def ollama_base_url() -> str:
+    """Base URL of the Ollama server's OpenAI-compatible API, e.g.
+    'http://localhost:11434/v1' or a remote 'http://HOST:11434/v1'.
+    For Ollama this base URL plays the role a key plays for other providers."""
+    return require_env("OLLAMA_BASE_URL")
+
+
+def ollama_model() -> str:
+    """Which model to call on the Ollama server. Models are server-specific
+    (whatever has been `ollama pull`-ed there), so this is configurable via the
+    OLLAMA_MODEL env var, with a sensible fallback for the current server."""
+    return os.getenv("OLLAMA_MODEL") or "puyangwang/medgemma-27b-it:q8"
 
 
 def available_providers() -> list[str]:

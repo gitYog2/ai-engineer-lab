@@ -23,7 +23,7 @@
 | 01 | The AI Application Stack | `01-ai-application-stack.md` | 🟡 In progress |
 | 02 | Proprietary vs Open-Source Models | `02-proprietary-vs-opensource-models.md` | ⚪ Not started |
 | 03 | How AI APIs Work | `03-how-ai-apis-work.md` | ⚪ Not started |
-| 04 | Tokenization, Context Windows, Temperature & Cost | `04-tokens-context-temperature-cost.md` | ⚪ Not started |
+| 04 | Tokenization, Context Windows, Temperature & Cost | `04-tokens-context-temperature-cost.md` | 🟡 In progress (Part 1 tokenization done) |
 | 05 | Retrieval & Embeddings (conceptual) | `05-retrieval-and-embeddings.md` | ⚪ Not started |
 | 06 | Orchestration Frameworks (conceptual) | `06-orchestration-frameworks.md` | ⚪ Not started |
 | 07 | AI Product Architecture (reverse engineering) | `07-ai-product-architecture.md` | ⚪ Not started |
