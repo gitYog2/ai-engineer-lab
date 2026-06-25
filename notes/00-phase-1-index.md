@@ -38,8 +38,8 @@ Legend: ⚪ Not started · 🟡 In progress · 🟢 Done
 |---|-----------|-----------|-------------|--------|
 | M1 | Environment + first API call | 01, 03 | One working live call to a provider (Groq) | 🟢 Done (2026-06-18) |
 | M2 | Multi-provider integration | 02, 03 | Clean OpenAI + Anthropic + Groq calls, one pattern | 🟢 Done (2026-06-25) — `llm.py` one-pattern abstraction; Groq + novarelay(→Claude) wired & proven; paid providers gated only by $0 account balance |
-| M3 | Tokenization deep-dive | 04 | Token-counting experiments | 🟡 Current |
-| M4 | Sampling controls | 04 | Temperature / top_p experiments | ⚪ |
+| M3 | Tokenization deep-dive | 04 | Token-counting experiments | 🟢 Done (2026-06-25) — tiktoken token table + Groq comparison |
+| M4 | Sampling controls | 04 | Temperature / top_p experiments | 🟢 Done (2026-06-25) — temp 0 vs 1.3, verified across Groq + Ollama |
 | M5 | Context windows + cost | 04 | Context-limit experiments + cost math | ⚪ |
 | M6 | Model comparison | 02, 04 | Quality/speed/cost comparison across providers | ⚪ |
 | M7 | Retrieval & embeddings | 05 | Tiny embeddings + similarity-search experiment | ⚪ |

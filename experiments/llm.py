@@ -67,7 +67,7 @@ class LLMProvider:
     name: str = "base"
     default_model: str = ""
 
-    def chat(self, system: str, user: str) -> ChatResult:
+    def chat(self, system: str, user: str, temperature: float = 0.7) -> ChatResult:
         raise NotImplementedError
 
 
@@ -84,7 +84,7 @@ class _OpenAICompatibleProvider(LLMProvider):
     def _make_client(self):
         raise NotImplementedError  # each subclass plugs in its own SDK client
 
-    def chat(self, system: str, user: str) -> ChatResult:
+    def chat(self, system: str, user: str, temperature: float = 0.7) -> ChatResult:
         # In this dialect the system prompt is just the first message in the list.
         response = self._client.chat.completions.create(
             model=self.model,
@@ -92,7 +92,7 @@ class _OpenAICompatibleProvider(LLMProvider):
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},
             ],
-            temperature=0.7,
+            temperature=temperature,
         )
         usage = response.usage
         return ChatResult(
@@ -186,13 +186,13 @@ class AnthropicProvider(LLMProvider):
         from anthropic import Anthropic
         self._client = Anthropic(api_key=anthropic_api_key())
 
-    def chat(self, system: str, user: str) -> ChatResult:
+    def chat(self, system: str, user: str, temperature: float = 0.7) -> ChatResult:
         response = self._client.messages.create(
             model=self.model,
             system=system,                  # DIFFERENT: top-level arg, NOT a message
             messages=[{"role": "user", "content": user}],
             max_tokens=1024,                # DIFFERENT: REQUIRED by Anthropic
-            temperature=0.7,
+            temperature=temperature,
         )
         usage = response.usage
         return ChatResult(

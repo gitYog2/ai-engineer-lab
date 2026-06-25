@@ -99,11 +99,46 @@ Every token you send or receive is taxed three ways:
 
 ---
 
-## PART 2 — Temperature & Sampling (M4)  *(stub — fill in M4)*
+## PART 2 — Temperature & Sampling (M4)
 
-> How the model turns its next-token probability distribution into an actual
-> choice. `temperature`, `top_p`, determinism vs creativity. Experiments:
-> same prompt at temp 0 vs 1.0; observe variance.
+### 1. The Concept
+
+At each step the model outputs a probability distribution over the next token.
+**Temperature decides how we sample from it:**
+- `temperature = 0` → always pick the single most-likely token → **deterministic**
+  (greedy). Same input → same output.
+- higher temperature → flattens the distribution → lower-probability tokens get
+  a real chance → **more random / creative / varied**.
+
+(`top_p` / nucleus sampling is a sibling knob: instead of flattening, it samples
+only from the smallest set of tokens whose probabilities sum to *p*. Tune one or
+the other, not both.)
+
+### 2. What I Observed (`experiments/m4_temperature.py`)
+
+Same prompt ("invent a coffee-shop name") ×4:
+- **temp 0.0** → identical every time (Groq: "Brewed Awakening Co." ×4;
+  Ollama/MedGemma: "The Daily Grindstone" ×4).
+- **temp 1.3** → answers vary run to run.
+- **Cross-model bonus:** BOTH providers are deterministic at 0 and varied at 1.3
+  — temperature behaves the same regardless of model/vendor.
+
+### 3. When to Use Which (the practical rule)
+
+| Want | Temperature | Examples |
+|------|-------------|----------|
+| Consistency / correctness | **~0** | extraction, classification, JSON, code, tool-calling, evals |
+| Creativity / variety | **~0.7–1.3** | brainstorming, naming, marketing copy, ideas |
+
+> Default instinct: **start at 0 for anything you'll parse or must reproduce**;
+> raise it only when you *want* surprise. A flaky pipeline is often just a
+> too-high temperature.
+
+### 4. Caveats
+
+- temp 0 is "as deterministic as possible," not a 100% guarantee — batching,
+  floating-point, and MoE routing can still cause rare differences.
+- Very high temperature (→2) eventually produces incoherent text.
 
 ---
 
