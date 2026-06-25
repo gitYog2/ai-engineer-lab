@@ -1,0 +1,18 @@
+# Python dependency manifest.
+# Java analogy: this is the equivalent of Maven's <dependencies> in pom.xml
+# or Gradle's `dependencies { ... }` block.
+#
+# Install everything with:
+#   pip install -r requirements.txt
+#
+# The ">=" pins a minimum version (reproducibility); pip resolves the rest.
+
+groq>=0.9.0
+python-dotenv>=1.0.0
+
+# Added in M2 — one SDK per provider, all hidden behind llm.py's single interface.
+openai>=1.0.0
+anthropic>=0.40.0
+
+# Added in M3 — local tokenizer so we can SEE/count tokens without an API call.
+tiktoken>=0.7.0

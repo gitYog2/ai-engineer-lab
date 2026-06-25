@@ -1,0 +1,15 @@
+# --- Python ---
+.venv/
+__pycache__/
+*.pyc
+
+# --- Secrets (NEVER commit real keys) ---
+.env
+
+# --- OS / editor noise ---
+.DS_Store
+.idea/
+.vscode/
+
+# --- Claude Code local (personal, per-machine — not for sharing) ---
+.claude/settings.local.json
