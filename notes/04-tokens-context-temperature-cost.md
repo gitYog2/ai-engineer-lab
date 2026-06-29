@@ -142,11 +142,50 @@ Same prompt ("invent a coffee-shop name") ×4:
 
 ---
 
-## PART 3 — Context Windows & Cost Math (M5)  *(stub — fill in M5)*
+## PART 3 — Context Windows & Cost Math (M5)
 
-> The fixed token budget per request; what happens when you exceed it; how to
-> compute the $ cost of a call from `usage` and a price sheet; input vs output
-> pricing; why retrieval beats "paste everything".
+### 1. Context window
+
+The fixed token budget for ONE request: system prompt + history + new question +
+the generated answer must **all** fit. E.g. Llama-3.3-70B = **128,000 tokens**
+(~197 pages of English). My test call used just 121 / 128,000 (0.09%) — but a
+long document or a growing chat history fills it fast.
+
+**Exceed it →** the API rejects the call (`context_length_exceeded`, HTTP 400) OR
+silently drops the oldest messages (truncation) — so a chatbot can quietly
+"forget" the start of a long conversation. The fix is **not** a bigger window;
+it's the **Retrieval layer** (Concept 01 / M7): fetch only the relevant chunks
+and put those in the prompt, instead of pasting everything.
+
+### 2. Cost math
+
+You pay per token, with input and output priced **separately**:
+
+```
+cost = (prompt_tokens / 1e6) * price_in  +  (completion_tokens / 1e6) * price_out
+```
+
+Observed — the SAME 49-in / 72-out call, ILLUSTRATIVE prices, scaled to 1M calls/mo:
+
+| model | $/call | $/month @ 1M calls |
+|-------|-------:|-------------------:|
+| Self-hosted (Ollama) | $0 | $0 |
+| GPT-4o-mini | $0.000051 | $51 |
+| Groq Llama-3.3-70B | $0.000086 | $86 |
+| GPT-4o | $0.000843 | $842 |
+| Claude Sonnet | $0.001227 | $1,227 |
+| Claude Opus | $0.006135 | $6,135 |
+
+### 3. Engineering takeaways
+
+- **Model choice IS a cost decision** — ~120× spread for identical work. Use the
+  cheapest model that clears your quality bar; reserve expensive models for hard tasks.
+- **Output usually costs more than input** — cap `max_tokens`, avoid rambly prompts.
+- **Self-hosted = $0/token** (you pay hardware + electricity instead) — the real
+  trade is ops burden vs per-token cost.
+- **Bigger context isn't free** — every token in the window is billed on every
+  call, and quality can degrade with very long contexts. Retrieval (M7) beats
+  "paste everything."
 
 ---
 
