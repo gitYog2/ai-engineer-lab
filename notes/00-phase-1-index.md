@@ -23,7 +23,7 @@
 | 01 | The AI Application Stack | `01-ai-application-stack.md` | 🟡 In progress |
 | 02 | Proprietary vs Open-Source Models | `02-proprietary-vs-opensource-models.md` | ⚪ Not started |
 | 03 | How AI APIs Work | `03-how-ai-apis-work.md` | ⚪ Not started |
-| 04 | Tokenization, Context Windows, Temperature & Cost | `04-tokens-context-temperature-cost.md` | 🟡 In progress (Part 1 tokenization done) |
+| 04 | Tokenization, Context Windows, Temperature & Cost | `04-tokens-context-temperature-cost.md` | 🟢 Done (tokens M3 · temperature M4 · context+cost M5) |
 | 05 | Retrieval & Embeddings (conceptual) | `05-retrieval-and-embeddings.md` | ⚪ Not started |
 | 06 | Orchestration Frameworks (conceptual) | `06-orchestration-frameworks.md` | ⚪ Not started |
 | 07 | AI Product Architecture (reverse engineering) | `07-ai-product-architecture.md` | ⚪ Not started |
@@ -40,7 +40,7 @@ Legend: ⚪ Not started · 🟡 In progress · 🟢 Done
 | M2 | Multi-provider integration | 02, 03 | Clean OpenAI + Anthropic + Groq calls, one pattern | 🟢 Done (2026-06-25) — `llm.py` one-pattern abstraction; Groq + novarelay(→Claude) wired & proven; paid providers gated only by $0 account balance |
 | M3 | Tokenization deep-dive | 04 | Token-counting experiments | 🟢 Done (2026-06-25) — tiktoken token table + Groq comparison |
 | M4 | Sampling controls | 04 | Temperature / top_p experiments | 🟢 Done (2026-06-25) — temp 0 vs 1.3, verified across Groq + Ollama |
-| M5 | Context windows + cost | 04 | Context-limit experiments + cost math | ⚪ |
+| M5 | Context windows + cost | 04 | Context-limit experiments + cost math | 🟢 Done (2026-06-26) — window budget % + cross-model cost table |
 | M6 | Model comparison | 02, 04 | Quality/speed/cost comparison across providers | ⚪ |
 | M7 | Retrieval & embeddings | 05 | Tiny embeddings + similarity-search experiment | ⚪ |
 | M8 | Orchestration frameworks | 06 | Conceptual map + "when NOT to use a framework" note | ⚪ |
@@ -63,7 +63,7 @@ Legend: ⚪ Not started · 🟡 In progress · 🟢 Done
 
 ## 4. Progress
 
-**Phase 1 completion: ~25%** (M1 + M2 done. M2: `llm.py` Strategy/Adapter — one `chat()` over Groq + OpenAI + Anthropic + novarelay; Groq live (free); novarelay reaches Claude Opus 4.8 via the OpenAI dialect, blocked only by $0 balance. Now on M3 — tokenization.)
+**Phase 1 completion: ~45%** (M1–M5 done. Foundations complete: live calls, a one-pattern multi-provider abstraction (Groq + OpenAI + Anthropic + novarelay→Claude + remote Ollama), tokenization, temperature/sampling, and context-window + cost math. Concept 04 fully written. Next: M6 — model comparison across providers.)
 
 ---
 
@@ -83,3 +83,4 @@ Legend: ⚪ Not started · 🟡 In progress · 🟢 Done
 | 2026-06-18 | Ran Milestone 1 (live Groq call) | ✅ First live LLM call. 170 tokens (61 prompt + 109 completion). Model round-trip ~0.1–0.6 s. M1 complete; M2 unlocked. |
 | 2026-06-24 | M2 abstraction (multi-provider) | ✅ Built `llm.py` (Strategy/Adapter: `ChatResult` + `LLMProvider` + Groq/OpenAI/Anthropic + `get_provider` factory) and `m2_multi_provider.py`. `config.py` grew `openai_api_key()`, `anthropic_api_key()`, `available_providers()`. Installed `openai` 2.43.0 + `anthropic` 0.111.0. Ran it: Groq path verified (147 tokens, ~1.6 s). OpenAI/Anthropic adapters coded but key-gated. |
 | 2026-06-25 | M2 close-out + debugging | ✅ Pushed code (repo made public). Added `NovaRelayProvider` (novarelay.io OpenAI-compatible relay → Claude Opus 4.8) + custom User-Agent to pass its Cloudflare filter; UTF-8 console fix. Debugged 4 distinct failure modes: wrong key, OpenAI `429 insufficient_quota`, novarelay `403 insufficient_user_quota` ($0 balance), Cloudflare UA block. Decision: **stay Groq-only (free); M2 done.** Starting M3 (tokenization). |
+| 2026-06-26 | M3 + M4 + M5 | ✅ M3 `m3_tokenization.py` (tiktoken token pieces/counts + Groq comparison; Hindi ≈ 4× token cost). Added remote `OllamaProvider` (MedGemma 27B). M4 `m4_temperature.py` (+ `temperature` on `chat()`; temp 0 deterministic vs 1.3 varied, verified Groq + Ollama). M5 `m5_context_and_cost.py` (128k window budget % + cross-model cost table, ~120× spread). Concept 04 note fully written. M3/M4 committed to `develop` & pushed; M5 pending commit. |
